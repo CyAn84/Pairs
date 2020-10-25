@@ -88,11 +88,11 @@ Window {
             anchors.centerIn: parent
 
             Text {
-                text: "CONGRATULATIONS!"
+                text: qsTr("CONGRATULATIONS!")
             }
 
             Text {
-                text: "You made " + grid.tries + " tries."
+                text: qsTr("You made ") + grid.tries + qsTr(" tries.")
             }
 
         }
