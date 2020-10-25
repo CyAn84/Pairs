@@ -12,6 +12,8 @@ Window {
         id: grid
         property int lastIndex: -1 // For correct resetting after second wrong try
         property int currentIndex: -1
+        property int matchCounter: 0 // Counter to check if the game was over
+        property int tries: 0 // Tries counter to show the scores after end
         anchors.fill: parent
         anchors.margins: 10
         rows: 10
@@ -50,7 +52,7 @@ Window {
                 }
 
                 transitions: Transition {
-                    NumberAnimation { target: rotation; property: "angle"; duration: 1000 }
+                    NumberAnimation { target: rotation; property: "angle"; duration: 200 }
                 }
 
                 MouseArea {
@@ -62,7 +64,7 @@ Window {
 
         Timer { // Makes delay after second wrong try
             id: timer
-            interval: 1000; running: false; repeat: false
+            interval: 200; running: false; repeat: false
             onTriggered: {
                 console.log("Timer triggered.")
                 repeater.itemAt(grid.lastIndex).flipped = false
@@ -71,6 +73,29 @@ Window {
             }
         }
 
+
+    }
+
+    Rectangle {
+        id: results
+        width: 300
+        height: 200
+        anchors.centerIn: parent
+        color: "white"
+        visible: false
+
+        Column {
+            anchors.centerIn: parent
+
+            Text {
+                text: "CONGRATULATIONS!"
+            }
+
+            Text {
+                text: "You made " + grid.tries + " tries."
+            }
+
+        }
     }
 
     function flip(index) { // Logic of the game
@@ -82,9 +107,14 @@ Window {
                 console.log("Wait for second flip, last index = " + grid.lastIndex)
             } else {
                 console.log("Second flip.")
+                grid.tries++
                 if (repeater.itemAt(index).imagePath === repeater.itemAt(grid.lastIndex).imagePath) { // Match is the same pictures
                     console.log("Match!")
                     grid.lastIndex = -1
+                    grid.matchCounter = grid.matchCounter + 2
+                    if (grid.matchCounter === repeater.count) {
+                        showResults()
+                    }
                 } else {
                     console.log("Not match, reset.")
                     grid.currentIndex = index
@@ -94,5 +124,10 @@ Window {
         } else {
             console.log("Already flipped.")
         }
+    }
+
+    function showResults() {
+        grid.visible = false
+        results.visible = true
     }
 }
